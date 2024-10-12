@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`bg-primary-950 text-primary-100 min-h-screen ${josefin.className} antialiased relative`}
+        className={`bg-primary-950 text-primary-100 min-h-screen mx-5 ${josefin.className} antialiased relative`}
       >
         <Header />
         <div className="hero-background-image">
