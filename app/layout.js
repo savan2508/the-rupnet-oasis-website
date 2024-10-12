@@ -1,5 +1,3 @@
-import Navigation from "@/app/_components/Navigation";
-import Logo from "@/app/_components/Logo";
 import "@/app/_styles/globals.css";
 
 import { Josefin_Sans } from "next/font/google";
@@ -23,11 +21,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`bg-primary-950 text-primary-100 min-h-screen ${josefin.className}`}
+        className={`bg-primary-950 text-primary-100 min-h-screen ${josefin.className} antialiased relative`}
       >
         <Header />
-        <main>{children}</main>
-        <footer>&copy; {new Date().getFullYear()} The Rupnet Oasis</footer>
+        <div className="hero-background-image">
+          <main className="max-w-7xl mx-auto">{children}</main>
+        </div>
+        <footer className="py-4 text-center">
+          &copy; {new Date().getFullYear()} The Rupnet Oasis
+        </footer>
       </body>
     </html>
   );
