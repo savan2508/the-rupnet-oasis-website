@@ -21,12 +21,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`bg-primary-950 text-primary-100 min-h-screen mx-5 ${josefin.className} antialiased relative`}
+        className={`bg-primary-950 text-primary-100 min-h-screen flex flex-col ${josefin.className} antialiased relative`}
       >
         <Header />
-        <div className="hero-background-image">
-          <main className="max-w-7xl mx-auto">{children}</main>
-        </div>
+        <main className="max-w-7xl mx-auto w-full">{children}</main>
+        <div className="hero-background-image"></div>
         <footer className="py-4 text-center">
           &copy; {new Date().getFullYear()} The Rupnet Oasis
         </footer>
