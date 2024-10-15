@@ -38,3 +38,6 @@ next-env.d.ts
 # webstorm
 .idea
 /21-the-wild-oasis-website/
+/.env
+!/.env.local
+/.env.local
