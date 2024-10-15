@@ -1,0 +1,49 @@
+.container {
+    margin-top: auto;
+    padding: 16px;
+    border-radius: 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.heading {
+    font-size: 1.5em;
+    margin-bottom: 16px;
+    color: #333;
+}
+
+.button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: #0070f3;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #005bb5;
+}
+
+.button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.success {
+    background-color: green !important;
+}
+
+.errorMessage {
+    color: red;
+    font-weight: bold;
+}
+
+.successMessage {
+    color: green;
+    font-weight: bold;
+}
