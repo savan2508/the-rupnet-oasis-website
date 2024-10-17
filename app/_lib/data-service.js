@@ -12,9 +12,6 @@ export async function getCabin(id) {
     .eq("id", id)
     .single();
 
-  // For testing
-  // await new Promise((res) => setTimeout(res, 1000));
-
   if (error) {
     console.error(error);
     notFound();
@@ -49,6 +46,17 @@ export const getCabins = async function () {
   }
 
   return data;
+};
+
+export const getNumberOfCabins = async function () {
+  const { data, error } = await supabase.from("cabins").select("id");
+
+  if (error) {
+    console.error(error);
+    throw new Error("Cabins could not be loaded");
+  }
+
+  return data.length;
 };
 
 // Guests are uniquely identified by their email address
