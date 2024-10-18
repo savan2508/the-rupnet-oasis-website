@@ -2,9 +2,6 @@ import { eachDayOfInterval } from "date-fns";
 import supabase from "@/app/_services/supabase";
 import { notFound } from "next/navigation";
 
-/////////////
-// GET
-
 export async function getCabin(id) {
   const { data, error } = await supabase
     .from("cabins")
@@ -186,9 +183,6 @@ export async function createBooking(newBooking) {
 
   return data;
 }
-
-/////////////
-// UPDATE
 
 // The updatedFields is an object which should ONLY contain the updated data
 export async function updateGuest(id, updatedFields) {
