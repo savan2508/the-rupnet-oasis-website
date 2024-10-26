@@ -1,6 +1,6 @@
 "use client";
 
-import { isWithinInterval } from "date-fns";
+import { isSameDay, isWithinInterval } from "date-fns";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { useReservation } from "./ReservationContext";
@@ -27,13 +27,25 @@ function DateSelector({ settings, cabin, bookedDates }) {
   // SETTINGS
   const { minBookingLength, maxBookingLength } = settings;
 
+  const handleSelect = (selectedRange) => {
+    if (selectedRange?.from && selectedRange?.to) {
+      // Check if the start and end dates are the same
+      if (isSameDay(selectedRange.from, selectedRange.to)) {
+        // Reset or ignore the selection
+        resetRange();
+        return;
+      }
+    }
+    setRange(selectedRange);
+  };
+
   return (
     <>
       <div className="flex flex-col justify-between">
         <DayPicker
           className={"pt-12 place-self-center"}
           mode="range"
-          onSelect={setRange}
+          onSelect={handleSelect}
           selected={range}
           min={minBookingLength + 1}
           max={maxBookingLength}
@@ -74,7 +86,7 @@ function DateSelector({ settings, cabin, bookedDates }) {
             ) : null}
           </div>
 
-          {range.from || range.to ? (
+          {range?.from || range?.to ? (
             <button
               className="border border-primary-800 py-2 px-4 text-sm font-semibold"
               onClick={resetRange}
