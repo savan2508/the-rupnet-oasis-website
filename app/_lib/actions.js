@@ -4,6 +4,7 @@ import { auth, signIn, signOut } from "@/app/_lib/auth";
 import supabase from "@/app/_services/supabase";
 import { revalidatePath } from "next/cache";
 import { getBookings } from "@/app/_lib/data-service";
+import { redirect } from "next/navigation";
 
 export async function signInAction() {
   await signIn("google", { redirectTo: "/account" });
@@ -66,4 +67,38 @@ export async function deleteReservation(bookingId) {
   }
 
   revalidatePath("/account/reservations");
+}
+
+export async function updateBooking(formData) {
+  const session = await auth();
+
+  if (!session) {
+    throw new Error("Unauthorized");
+  }
+
+  const bookingId = Number(formData.get("bookingId"));
+  const numGuests = formData.get("numGuests");
+  const observations = formData.get("observations").slice(0, 1000);
+
+  const guestBookings = await getBookings(session.user.guestId);
+  const guestBookingIds = guestBookings.map((booking) => booking.id);
+
+  if (!guestBookingIds.includes(bookingId)) {
+    throw new Error("Unauthorized to update this reservation");
+  }
+
+  const { error } = await supabase
+    .from("bookings")
+    .update({ numGuests, observations })
+    .eq("id", bookingId)
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error("Error updating reservation");
+  }
+
+  revalidatePath("/account/reservations");
+  revalidatePath("/account/reservations/edit/" + bookingId);
+  redirect("/account/reservations");
 }
