@@ -2,10 +2,37 @@
 
 import { useReservation } from "./ReservationContext";
 import Image from "next/image";
+import { differenceInDays } from "date-fns";
+import { createBooking } from "@/app/_lib/actions";
+import SubmitButton from "@/app/_components/SubmitButton";
+import { useEffect, useState } from "react";
 
 function ReservationForm({ cabin, user }) {
-  const { range } = useReservation();
-  const { maxCapacity } = cabin;
+  const { resetRange, startDate, endDate, numNights, submitButtonDisabled } =
+    useReservation();
+  const { maxCapacity, regularPrice, discount, id } = cabin;
+
+  const cabinPrice = numNights > 0 ? numNights * (regularPrice - discount) : 0;
+
+  const [bookingData, setBookingData] = useState({
+    startDate,
+    endDate,
+    numNights,
+    cabinPrice,
+    cabinId: id,
+  });
+
+  useEffect(() => {
+    setBookingData({
+      startDate,
+      endDate,
+      numNights,
+      cabinPrice,
+      cabinId: id,
+    });
+  }, [startDate, endDate, numNights, cabinPrice, id]);
+
+  // const createBookingWithData = createBooking.bind(null, bookingData);
 
   return (
     <div className="scale-[1.01]">
@@ -24,7 +51,13 @@ function ReservationForm({ cabin, user }) {
         </div>
       </div>
 
-      <form className="bg-primary-900 py-10 px-16 text-lg flex gap-5 flex-col">
+      <form
+        action={async (formData) => {
+          await createBooking(bookingData, formData);
+          resetRange();
+        }}
+        className="bg-primary-900 py-10 px-16 text-lg flex gap-5 flex-col"
+      >
         <div className="space-y-2">
           <label htmlFor="numGuests">How many guests?</label>
           <select
@@ -33,7 +66,7 @@ function ReservationForm({ cabin, user }) {
             className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
             required
           >
-            <option value="" key="">
+            <option value="" key="selectNumberOfGuestDropdown">
               Select number of guests...
             </option>
             {Array.from({ length: maxCapacity }, (_, i) => i + 1).map((x) => (
@@ -59,9 +92,12 @@ function ReservationForm({ cabin, user }) {
         <div className="flex justify-end items-center gap-6">
           <p className="text-primary-300 text-base">Start by selecting dates</p>
 
-          <button className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300">
+          <SubmitButton
+            disabled={submitButtonDisabled}
+            pendingLabel="Reserving..."
+          >
             Reserve now
-          </button>
+          </SubmitButton>
         </div>
       </form>
     </div>

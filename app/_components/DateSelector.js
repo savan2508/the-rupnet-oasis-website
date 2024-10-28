@@ -1,16 +1,16 @@
 "use client";
 
-import { isSameDay, isWithinInterval } from "date-fns";
+import { differenceInDays, isSameDay, isWithinInterval } from "date-fns";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { useReservation } from "./ReservationContext";
 
 function isAlreadyBooked(range, datesArr) {
   return (
-    range.from &&
-    range.to &&
-    datesArr.some((date) =>
-      isWithinInterval(date, { start: range.from, end: range.to }),
+    range?.from &&
+    range?.to &&
+    datesArr?.some((date) =>
+      isWithinInterval(date, { start: range?.from, end: range?.to }),
     )
   );
 }
@@ -18,13 +18,14 @@ function isAlreadyBooked(range, datesArr) {
 function DateSelector({ settings, cabin, bookedDates }) {
   const { range, setRange, resetRange } = useReservation();
 
-  // CHANGE
-  const regularPrice = 23;
-  const discount = 23;
-  const numNights = 23;
-  const cabinPrice = 23;
+  const displayRange = isAlreadyBooked(range, bookedDates) ? {} : range;
 
-  // SETTINGS
+  const { regularPrice, discount } = cabin;
+
+  const numNights = differenceInDays(displayRange?.to, displayRange?.from);
+  const cabinPrice =
+    numNights > 0 ? numNights * (cabin.regularPrice - cabin.discount) : 0;
+
   const { minBookingLength, maxBookingLength } = settings;
 
   const handleSelect = (selectedRange) => {
@@ -36,6 +37,11 @@ function DateSelector({ settings, cabin, bookedDates }) {
         return;
       }
     }
+    if (isAlreadyBooked(selectedRange, bookedDates)) {
+      alert("These dates are already booked. Please select different dates.");
+      resetRange();
+      return;
+    }
     setRange(selectedRange);
   };
 
@@ -46,8 +52,8 @@ function DateSelector({ settings, cabin, bookedDates }) {
           className={"pt-12 place-self-center"}
           mode="range"
           onSelect={handleSelect}
-          selected={range}
-          min={minBookingLength + 1}
+          selected={displayRange}
+          min={minBookingLength}
           max={maxBookingLength}
           startMonth={new Date()}
           endMonth={
@@ -73,7 +79,7 @@ function DateSelector({ settings, cabin, bookedDates }) {
               )}
               <span className="">/night</span>
             </p>
-            {numNights ? (
+            {numNights >= minBookingLength ? (
               <>
                 <p className="bg-accent-600 px-3 py-2 text-2xl">
                   <span>&times;</span> <span>{numNights}</span>
@@ -83,7 +89,11 @@ function DateSelector({ settings, cabin, bookedDates }) {
                   <span className="text-2xl font-semibold">${cabinPrice}</span>
                 </p>
               </>
-            ) : null}
+            ) : (
+              <p className="text-sm text-primary-700">
+                Minimum stay: {minBookingLength} nights
+              </p>
+            )}
           </div>
 
           {range?.from || range?.to ? (
