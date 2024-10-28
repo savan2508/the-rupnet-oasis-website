@@ -11,7 +11,7 @@ function Logo() {
         src={"/logo.png"}
       />
       <span className="text-xl font-semibold text-primary-100">
-        The Wild Oasis
+        The Rupnet Oasis
       </span>
     </Link>
   );
